@@ -1,0 +1,149 @@
+ライブラリの使い方について
+
+===============
+基本的にはWindowsもLinux版も関数の使い方については同じです。
+
+但し、Windows版はDLLではなくてlibです。(STLの受け渡ししてるから仕方ないのや)
+
+Linux版は.soですのでリンク方法とか、これで作ったアプリの配布形式が違うくらいです。
+
+
+
+ヘッダ
+===============
+ヘッダは
+
+# include "libipf.hpp"
+
+を埋めるだけでOKです。必要なヘッダはすべて入るようにしています。
+
+
+
+関数仕様など
+===============
+
+libipf_read_header()でipfファイルのヘッダを解析させて、libipf_uncompress()で各ファイルの展開といった感じです。
+とりあえずこれだけなのですが、ipf_fileクラスとipf_table等があるので先にそっちの説明をします。
+
+--------------
+クラス ipf_file
+
+IPFファイルのヘッダ情報などを格納してます。
+あまり触ることなないと思います。詳細が知りたい人はipffile.hppをみてください
+
+--------------
+クラス ipf_element
+
+IPFファイルは一種のアーカイブで、IPFファイルに含まれているファイルの１つを示しています。
+これも直接はあまり触ることなないと思いますが、getArchiveNameとgetFileNameは知る必要があると思います。
+
+const std::string& getArchiveName()
+戻り：アーカイブ名を示しています。
+説明：
+ipfファイルの各ファイルは以下のような構造をしています。
+アーカイブ名/ファイル名
+これはアーカイブ名だけを返します。
+
+const std::string& getFileName()
+戻り：アーカイブ名を示しています。
+説明：
+ipfファイルの各ファイルは以下のような構造をしています。
+アーカイブ名/ファイル名
+これはファイル名だけを返します。
+但し、ファイル名は純粋なファイル名ではなくて、hogehoge/hugahuga.luaなど、パス名が含まれているのでこの辺は気を付けてね
+
+--------------
+クラス ipf_table
+ipf_elementをvector化したものです。それだけです。
+
+--------------
+クラス ipf_data
+uint_8型でvector化したものです。解凍したデータの受け渡しに使っています。
+
+
+--------------
+他、詳細が知りたい人はipffile.hppをみてください
+
+
+あとは普段使う関数を説明します。
+
+
+--------------
+int  libipf_read_header(const std::string &fname,std::ifstream &fin,ipf_file &ipf_h,ipf_table &ftable);
+
+fname: ファイル名を指定します
+fin:   ファイルストリームを指定します。呼び出し元でOpenされていなければなりません
+ipf_h: ipf_fileクラスのオブジェクトをそのまま渡してください。結果がOKならば色々データが入ります。
+ftable: ipf_tableクラスのオブジェクトをそのまま渡してください。結果がOKならば色々データが入ります。
+戻り：
+何もエラーが無い場合は、IPF_OKを返します。
+何らかのエラーがあった場合は<0の値を返します。詳細はipferror.hppを見てください。
+説明；
+IPFファイルストリームからヘッダを読んで、ヘッダ情報をipf_h、IPFファイルテーブル情報をftableに返します。
+
+例を示すとこんな感じになります。
+ファイルストリームはbinary指定をやっておいてください。
+
+	fin.open(fname.c_str(),ios::in | ios::binary);
+	if(! fin.is_open()){
+		printf("ERROR: open file miss!!\n");
+		return -1;
+	}
+	
+	int status = libipf_read_header(fname.c_str(),fin,m_Ipf,flist);
+	if(status != IPF_OK){
+		printf("ERROR: read header miss!! (%d)\n",status);
+		return -1;
+	}
+
+--------------
+int  libipf_uncompress(std::ifstream &fin,ipf_element &ipf_info,ipf_data &buf);
+
+fin:   ファイルストリームを指定します。呼び出し元でOpenされていなければなりません
+ipf_info: 解凍したいデータが含まれているipf_elementクラスのオブジェクトをそのまま渡してください。
+buf: ipf_dataクラスのオブジェクトをそのまま渡してください。結果がOKならば色々データが入ります。
+戻り：
+何もエラーが無い場合は、IPF_OKを返します。
+何らかのエラーがあった場合は<0の値を返します。詳細はipferror.hppを見てください。
+説明；
+IPFファイルストリームからデータを読んで復号、解凍します。
+解凍するデータはipf_infoに指定されたものになります。
+解凍が成功したら、結果をbufに格納します。
+
+例を示すとこんな感じになります。
+ファイルストリームはbinary指定をやっておいて開かれている必要があります。
+flistはlibipf_read_headerによって設定されていなければなりません。
+
+	for(i=0;i<flist.size();i++){
+		printf("uncompress data... %s \n",flist[i].getFileName().c_str());
+		status = libipf_uncompress(fin,flist[i],fdata);
+		if(status != IPF_OK){
+			printf("ERROR: uncompress data miss!! (%d)\n",status);
+			return -1;
+		}
+		// なんか処理をする
+		...
+	}
+
+
+
+
+
+注意点
+--------
+Linux版は.soも一緒に同封する必要があります。
+
+Windows版はスタティックリンクするので.libを同封する必要はないですが、zdll1.dllを同封する必要があります。
+
+ipf_elementのアーカイブ名とファイル名の扱いには注意が必要です。
+ディレクトリの区切り文字が/なのでLinuxの場合はそのままでもよいのですが、Windowsの場合は色々
+しないといけません。詳しくはWindows版サンプルをみたらわかるので見てください。
+
+ファイルフォーマット(MAGIC番号)が違う場合はエラーとして返します。
+
+復号、解凍の結果CRCが一致しない場合はエラーとして返します。
+
+復号、解凍の結果、ファイルサイズが違う場合はZlibによってエラーになるかもしれません。
+
+上記三つどれかエラーになった場合は、ipfファイルが壊れてるかフォーマットが変わったと思ってください。
+
