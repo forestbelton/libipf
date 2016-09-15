@@ -1,0 +1,42 @@
+unipf
+ipf
+*.d
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# MSVC
+*.suo
+*.ncb
+*.pdb
+*.idb
+*.aps
+windows/Debug
+windows/libipf.vcproj.*
+windows/Release
+!windows/Release/libipf.lib
+!windows/Release/unipf.exe
+!windows/Release/zlib1.dll
+!windows/zlib/lib/zdll.lib
+!windows/winsample/unipf/
+windows/winsample/unipf/unipf.vcproj.*
+windows/winsample/unipf/Debug
+windows/winsample/unipf/Release

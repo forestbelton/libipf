@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libipf", "libipf.vcproj", "{CEBC535C-02E0-4A2E-830A-2A646E95B5D9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unipf", "winsample\unipf\unipf.vcproj", "{BC8D4783-F962-4569-945E-C2F03C6A171D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEBC535C-02E0-4A2E-830A-2A646E95B5D9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CEBC535C-02E0-4A2E-830A-2A646E95B5D9}.Debug|Win32.Build.0 = Debug|Win32
+		{CEBC535C-02E0-4A2E-830A-2A646E95B5D9}.Release|Win32.ActiveCfg = Release|Win32
+		{CEBC535C-02E0-4A2E-830A-2A646E95B5D9}.Release|Win32.Build.0 = Release|Win32
+		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Debug|Win32.Build.0 = Debug|Win32
+		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Release|Win32.ActiveCfg = Release|Win32
+		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
