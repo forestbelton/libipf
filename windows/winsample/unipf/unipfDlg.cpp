@@ -294,6 +294,12 @@ void unipfDlg::OnBnClickedUnipfInfoBtn()
 {
 	ifstream fin;
 	ClearVerbose();
+
+	if(m_ipffname.IsEmpty()){
+		AfxMessageBox("IPFファイル名を指定してください");
+		return;
+	}
+
 	if(! OpenIPFFile(fin)) return;
 
 	std::size_t i;
@@ -332,6 +338,15 @@ void unipfDlg::OnBnClickedUnipfUncompBtn()
 {
 	ifstream fin;
 	ClearVerbose();
+
+	if(m_ipffname.IsEmpty()){
+		AfxMessageBox("IPFファイル名を指定してください");
+		return;
+	}
+	if(m_ipfdirname.IsEmpty()){
+		AfxMessageBox("解凍先フォルダを指定してください");
+		return;
+	}
 
 	if(! OpenIPFFile(fin)) return;
 
