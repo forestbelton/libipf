@@ -40,7 +40,7 @@ protected:
 		uint16_t v = (uint16_t)((m_key[2] & 0xFFFF) | 2);
 		return (uint8_t)(((v * (v ^ 1)) >> 8) & 0xFF);
 	};
-
+	
 	// 1-Byte decrypter
 	inline uint8_t decrypt_byte(uint8_t src)
 	{
@@ -48,6 +48,22 @@ protected:
 		update(dest);
 		return dest;
 	};
+
+	inline uint8_t encrypt_byte_factor(uint32_t prekey2)
+	{
+		uint16_t v = (uint16_t)((prekey2 & 0xFFFF) | 2);
+		return (uint8_t)(((v * (v ^ 1)) >> 8) & 0xFF);
+	};
+	
+	// 1-Byte encrypter
+	inline uint8_t encrypt_byte(uint8_t src)
+	{
+		uint32_t prekey2 = m_key[2];
+		update(src);
+		uint8_t dest = src ^ encrypt_byte_factor(prekey2);
+		return dest;
+	};
+	
 	
 	void crc_init();
 	void update(char bv);
@@ -61,11 +77,17 @@ public:
 	void init(const std::string &password);	
 	void decrypt(std::vector<uint8_t> &cdata);
 	void decrypt(const std::vector<uint8_t> &cdata,std::vector<uint8_t> &ddata);
+
+	void encrypt(std::vector<uint8_t> &cdata);
+	void encrypt(const std::vector<uint8_t> &cdata,std::vector<uint8_t> &ddata);
 	
 };
 
 extern void ipf_decrypt(const std::string &password,std::vector<uint8_t> &cdata);
 extern void ipf_decrypt(const std::string &password,const std::vector<uint8_t> &cdata,std::vector<uint8_t> &ddata);
+
+extern void ipf_encrypt(const std::string &password,std::vector<uint8_t> &cdata);
+extern void ipf_encrypt(const std::string &password,const std::vector<uint8_t> &cdata,std::vector<uint8_t> &ddata);
 
 
 

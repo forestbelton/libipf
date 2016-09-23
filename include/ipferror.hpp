@@ -25,4 +25,7 @@
 #define IPF_ERROR_ZLIBMEM		(-12)		// zip buffer empty (broken file)
 #define IPF_ERROR_ZLIBUNKNOWN	(-13)		// unknown error Zlib
 #define IPF_ERROR_HEADER_FORMAT (-14)		// not support format
+#define IPF_ERROR_FWRITEINFO	(-15)		// Info write error
+#define IPF_ERROR_FWRITEHEAD	(-16)		// header write error
+#define IPF_ERROR_FWRITECOMP	(-17)		// file write error(compress)
 

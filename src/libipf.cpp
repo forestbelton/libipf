@@ -12,6 +12,7 @@
 
 using namespace std;
 
+// decompress -------------------------------------------------
 // read header and information from file
 int  libipf_read_header(const string &fname,ifstream &fin,ipf_file &ipf_h,ipf_table &ftable)
 {
@@ -27,7 +28,24 @@ int libipf_uncompress(std::ifstream &fin,ipf_element &ipf_info,ipf_data &buf)
 	return ret;
 }
 
-// dump
+
+// compress -------------------------------------------------
+// write compress data from buf (and set ipf_info)
+int libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf)
+{
+	int ret=IPF_OK;
+	ret = ipf_info.compress(fout,buf);
+	return ret;
+}
+
+// write file to IPF header and IPF infomation
+int  libipf_write_header_info(ofstream &fout,ipf_file &ipf_h,ipf_table &ftable,uint32_t base_rev,uint32_t revision)
+{
+	return ipf_h.write_tofile(fout,ftable,base_rev,revision);
+}
+
+
+// dump -------------------------------------------------
 void libipf_dump_fileinfo(ipf_file &ipf_h,ipf_table &ftable)
 {
 	std::size_t i;
@@ -50,7 +68,7 @@ void libipf_dump_fileinfo(ipf_file &ipf_h,ipf_table &ftable)
 			,ftable[i].getFilenameLength()
 			,ftable[i].getArcnameLength()
 			,ftable[i].getCRC()
-			,ftable[i].getComreessLength()
+			,ftable[i].getCompressLength()
 			,ftable[i].getUnCompressLength()
 			,ftable[i].getDataOffset()
 			,ftable[i].getArchiveName().c_str()

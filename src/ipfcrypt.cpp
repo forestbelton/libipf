@@ -64,6 +64,32 @@ void ipf_crypto::decrypt(const vector<uint8_t> &cdata, vector<uint8_t> &ddata)
 	}
 }
 
+// Performs coding processing of cdata, to override the results to the cdata
+void ipf_crypto::encrypt(vector<uint8_t> &cdata)
+{
+	std::size_t i;
+	
+	// Unlike the case of Zip, 2Byte eyes have been using the original value
+	// [Crypt][raw][Crypt][raw].....
+	for(i=0;i<cdata.size();i+=2){
+		cdata[i] = encrypt_byte(cdata[i]);
+	}
+}
+
+// Performs coding processing of cdata, put the result in ddata
+void ipf_crypto::encrypt(const vector<uint8_t> &cdata, vector<uint8_t> &ddata)
+{
+	std::size_t i;
+	
+	ddata.resize(cdata.size());
+	for(i=0;i<cdata.size();i+=2){
+		ddata[i] = encrypt_byte(cdata[i]);
+	}
+}
+
+
+
+
 
 void ipf_decrypt(const string &password,vector<uint8_t> &cdata)
 {
@@ -78,5 +104,22 @@ void ipf_decrypt(const string &password,const vector<uint8_t> &cdata,vector<uint
 	ipfc.init(password);
 	ipfc.decrypt(cdata,ddata);
 }
+
+
+void ipf_encrypt(const string &password,vector<uint8_t> &cdata)
+{
+	ipf_crypto ipfc;
+	ipfc.init(password);
+	ipfc.encrypt(cdata);
+}
+
+void ipf_encrypt(const string &password,const vector<uint8_t> &cdata,vector<uint8_t> &ddata)
+{
+	ipf_crypto ipfc;
+	ipfc.init(password);
+	ipfc.encrypt(cdata,ddata);
+}
+
+
 
 
