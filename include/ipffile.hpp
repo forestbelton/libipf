@@ -119,8 +119,7 @@ public:
 
 	inline bool isDeCompress()
 	{
-		if(getCompressLength() != getUnCompressLength())	return true;
-		return false;
+		return isCompress();
 	};
 	inline bool isCompress()
 	{

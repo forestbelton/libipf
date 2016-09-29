@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <dirent.h>
 
 using namespace std;
 
@@ -115,7 +116,7 @@ void mainApp::usage(int argc, char *argv[])
 		 "-h | --help          Print this message\n"
 		 "-f | --fhead         Print file header information\n"
 		 "-i | --info          Print file information\n"
-		 "-d | --dryrun        Dry run (un extract file)\n"
+		 "-d | --dryrun        Dry run (not run uncompressing)\n"
 		 "-v | --verbose       Verbose\n"
 		 "\n"
 		 "[Example]\n"
@@ -288,6 +289,21 @@ int mainApp::doExtractIPF()
 // IPFの作成を行う
 int mainApp::doCreateIPF()
 {
+	struct	dirent *dp;
+	DIR	*dir;
+	
+	if((dir = opendir(opt.getDirname().c_str()))==NULL){
+		printf("ERROR: can not open directory %s \n",opt.getDirname().c_str());
+		return -1;
+	}
+	while((dp = readdir(dir)) != NULL){
+		if(strcmp("..",dp->d_name) == 0) continue;
+		if(strcmp(".",dp->d_name) == 0) continue;
+
+		printf("dirn %s\n",dp->d_name);
+	}
+	closedir(dir);
+	
 	printf("sorry.. undefined \n");
 	return -1;
 }
