@@ -311,8 +311,8 @@ void unipfDlg::OnBnClickedUnipfInfoBtn()
 	PutVerbose("不明 %08X\r\n"						,m_Ipffile.getUnknown());
 	PutVerbose("アーカイブヘッダオフセット %08X\r\n",m_Ipffile.getFileFooterOffset());
 	PutVerbose("フォーマット %08X\r\n"				,m_Ipffile.getFormat());
-	PutVerbose("ベースリビジョン %08X\r\n"			,m_Ipffile.getBaseRevision());
-	PutVerbose("リビジョン %08X\r\n"				,m_Ipffile.getRevision());
+	PutVerbose("ベースリビジョン 0x%08X (%d)\r\n"	,m_Ipffile.getBaseRevision(),m_Ipffile.getBaseRevision());
+	PutVerbose("リビジョン 0x%08X (%d)\r\n"			,m_Ipffile.getRevision(),m_Ipffile.getRevision());
 	PutVerbose("---------------------------------\r\n");
 
 	PutVerbose("IPF ファイルテーブル ---------------------------------\r\n");
