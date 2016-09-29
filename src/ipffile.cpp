@@ -261,6 +261,16 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 	m_info.comp_length = 0;
 	setDataOffset((uint32_t)fout.tellp());
 	
+	if(getUnCompressLength() == 0){
+		char dmydata[10];
+		// set dummy data
+		m_info.comp_length = 2;
+		m_info.crc = 0;
+		fout.write(dmydata, getCompressLength());
+		if(! fout)	return IPF_ERROR_FWRITECOMP;
+		return IPF_OK;
+	}
+	
 	if(!isCompress()){
 		// it is no compression object
 		m_info.comp_length = m_info.uncomp_length;
@@ -289,7 +299,7 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 		
 		// ipf encoding
 		ipf_encrypt(IPF_COMPLESS_PASSWD,comp);
-		fout.write((const char *) &data[0], getCompressLength());
+		fout.write((const char *) &comp[0], getCompressLength());
 		if(! fout)	return IPF_ERROR_FWRITECOMP;
 	}
 	return IPF_OK;
@@ -298,8 +308,16 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 // Output to the data to compress the src
 int ipf_element::compress(ipf_data &src,ipf_data &data)
 {
-	m_info.uncomp_length = data.size();
+	m_info.uncomp_length = src.size();
 	m_info.comp_length = 0;
+	
+	if(getUnCompressLength() == 0){
+		// set dummy data
+		m_info.comp_length = 2;
+		m_info.crc = 0;
+		data.resize(getCompressLength()); // empty data
+		return IPF_OK;
+	}
 	
 	if(!isCompress()){
 		// Ahead to ensure the memory area

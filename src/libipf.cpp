@@ -46,10 +46,8 @@ int  libipf_write_header_info(ofstream &fout,ipf_file &ipf_h,ipf_table &ftable,u
 
 
 // dump -------------------------------------------------
-void libipf_dump_fileinfo(ipf_file &ipf_h,ipf_table &ftable)
+void libipf_dump_headerinfo(ipf_file &ipf_h)
 {
-	std::size_t i;
-	
 	printf("IPF file %s\n"			,ipf_h.getFileName().c_str());
 	printf("IPF header info ---------------------------------\n");
 	printf("file count %d\n"		,ipf_h.getFileCount());
@@ -57,10 +55,14 @@ void libipf_dump_fileinfo(ipf_file &ipf_h,ipf_table &ftable)
 	printf("unknown %08X\n"			,ipf_h.getUnknown());
 	printf("archive header %08X\n"	,ipf_h.getFileFooterOffset());
 	printf("format %08X\n"			,ipf_h.getFormat());
-	printf("base revision %08X\n"	,ipf_h.getBaseRevision());
-	printf("revision %08X\n"		,ipf_h.getRevision());
+	printf("base revision 0x%08X (%d)\n",ipf_h.getBaseRevision(),ipf_h.getBaseRevision());
+	printf("revision 0x%08X (%d)\n"		,ipf_h.getRevision(),ipf_h.getRevision());
 	printf("---------------------------------\n");
+}
 
+void libipf_dump_fileinfo(ipf_table &ftable)
+{
+	std::size_t i;
 	printf("IPF file info ---------------------------------\n");
 	printf(" Fnl  Anl      CRC         Comp       Uncomp   offset arcname filename\n");
 	for(i=0;i<ftable.size();i++){

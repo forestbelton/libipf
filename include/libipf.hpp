@@ -19,5 +19,6 @@ extern int	libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &b
 extern int	libipf_write_header_info(std::ofstream &fout,ipf_file &ipf_h,ipf_table &ftable,uint32_t base_rev,uint32_t revision);
 
 // dump -----------------------------------------------------
-extern void libipf_dump_fileinfo(ipf_file &ipf_h,ipf_table &ftable);
+extern void libipf_dump_headerinfo(ipf_file &ipf_h);
+extern void libipf_dump_fileinfo(ipf_table &ftable);
 

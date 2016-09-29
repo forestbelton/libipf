@@ -40,7 +40,9 @@ class cmdlineOption
 	
 	DIM_PARAM(bool,Extract)
 	DIM_PARAM(bool,Create)
+	DIM_PARAM(bool,Fhead)
 	DIM_PARAM(bool,Info)
+	DIM_PARAM(bool,Dryrun)
 	DIM_PARAM(bool,Verbose)
 	
 	DIM_PARAM(std::string,Fname)
@@ -53,6 +55,8 @@ class cmdlineOption
 		Extract 		= false;
 		Create 			= false;
 		Info		 	= false;
+		Fhead			= false;
+		Dryrun			= false;
 		Verbose			= false;
 	}
 	~cmdlineOption(){};
@@ -109,7 +113,9 @@ void mainApp::usage(int argc, char *argv[])
 		 "\n"
 		 "[Options]\n"
 		 "-h | --help          Print this message\n"
+		 "-f | --fhead         Print file header information\n"
 		 "-i | --info          Print file information\n"
+		 "-d | --dryrun        Dry run (un extract file)\n"
 		 "-v | --verbose       Verbose\n"
 		 "\n"
 		 "[Example]\n"
@@ -139,14 +145,18 @@ namespace CMDLINE_OPT
 {
 	enum {
 		PUT_HELP	= 1,
+		FHEAD,
 		INFO,
+		DRYRUN,
 		VERBOSE,
 	};
 };
 
 static const struct option
 long_options[] = {
+	{ "fhead",		no_argument,		NULL, CMDLINE_OPT::FHEAD		},
 	{ "info",		no_argument,		NULL, CMDLINE_OPT::INFO			},
+	{ "dryrun",		no_argument,		NULL, CMDLINE_OPT::DRYRUN		},
 	{ "help",		no_argument,		NULL, CMDLINE_OPT::PUT_HELP		},
 	{ "verbose",	no_argument,		NULL, CMDLINE_OPT::VERBOSE		},
 	{ 0, 0, 0, 0 }
@@ -167,8 +177,16 @@ bool mainApp::parse_cmdline(int argc,char *argv[])
 			usage(argc, argv);
 			return false;
 			
+		case CMDLINE_OPT::FHEAD:
+			opt.setFhead(true);
+			break;
+			
 		case CMDLINE_OPT::INFO:
 			opt.setInfo(true);
+			break;
+
+			case CMDLINE_OPT::DRYRUN:
+			opt.setDryrun(true);
 			break;
 
 		case CMDLINE_OPT::VERBOSE:
@@ -229,8 +247,14 @@ int mainApp::doExtractIPF()
 	}
 	printf("IPF file in file %lu \n",flist.size());
 	
+	if(opt.getFhead()){
+		libipf_dump_headerinfo(m_Ipf);
+	}
 	if(opt.getInfo()){
-		libipf_dump_fileinfo(m_Ipf,flist);
+		libipf_dump_fileinfo(flist);
+	}
+	if(opt.getDryrun()){
+		return 0;
 	}
 	
 	for(i=0;i<flist.size();i++){
