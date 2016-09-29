@@ -233,7 +233,6 @@ int mainApp::doExtractIPF()
 		libipf_dump_fileinfo(m_Ipf,flist);
 	}
 	
-	// TESTEST -------------------------------------------------------------
 	for(i=0;i<flist.size();i++){
 		printf("uncompress data... %s \n",flist[i].getFileName().c_str());
 		status = libipf_uncompress(fin,flist[i],fdata);
@@ -250,10 +249,11 @@ int mainApp::doExtractIPF()
 			printf("ERROR: file create error \n");
 			return -1;
 		}
-		
-		fout.write((char *) &fdata[0], fdata.size());
-		if(fout.bad()){
-			return -1;
+		if(! fdata.empty()){
+			fout.write((char *) &fdata[0], fdata.size());
+			if(fout.bad()){
+				return -1;
+			}
 		}
 		fout.close();
 	}

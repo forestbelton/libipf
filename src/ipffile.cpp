@@ -191,6 +191,10 @@ int ipf_element::checkCRC(ipf_data &data)
 // Output to the data to read the file decompression
 int ipf_element::uncompress(ifstream &fin,ipf_data &data)
 {
+	if(getUnCompressLength() == 0){
+		data.clear();
+		return IPF_OK;
+	}
 	fin.seekg (getDataOffset(), ios::beg);
 	if(!fin) return IPF_ERROR_FSEEKDECOMP;
 	
@@ -225,6 +229,10 @@ int ipf_element::uncompress(ifstream &fin,ipf_data &data)
 // Output to the data to extract the src
 int ipf_element::uncompress(ipf_data &src,ipf_data &data)
 {
+	if(getUnCompressLength() == 0){
+		data.clear();
+		return IPF_OK;
+	}
 	if(!isDeCompress()){
 		// Ahead to ensure the memory area
 		data.reserve(src.size());

@@ -387,12 +387,15 @@ void unipfDlg::OnBnClickedUnipfUncompBtn()
 			ecnt++;
 			continue;
 		}
-		fout.write((char *) &fdata[0], (std::streamsize)fdata.size());
-		if(fout.bad()){
-			PutVerbose("ERROR: ファイル書き込み失敗 \r\n");
-			ecnt++;
-			fout.close();
-			continue;
+		// 展開後サイズが空の場合があるので一応チェックしてから書く
+		if(! fdata.empty()){
+			fout.write((char *) &fdata[0], (std::streamsize)fdata.size());
+			if(fout.bad()){
+				PutVerbose("ERROR: ファイル書き込み失敗 \r\n");
+				ecnt++;
+				fout.close();
+				continue;
+			}
 		}
 		fout.close();
 		scnt++;
