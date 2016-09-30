@@ -15,8 +15,8 @@ extern int	libipf_read_header(const std::string &fname,std::ifstream &fin,ipf_fi
 extern int	libipf_uncompress(std::ifstream &fin,ipf_element &ipf_info,ipf_data &buf);
 
 // compress -------------------------------------------------
-extern int	libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf);
-extern int	libipf_write_header_info(std::ofstream &fout,ipf_file &ipf_h,ipf_table &ftable,uint32_t base_rev,uint32_t revision);
+extern int	libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf,int complevel);
+extern int	libipf_write_header_info(std::ofstream &fout,ipf_table &ftable,uint32_t base_rev,uint32_t revision);
 
 // dump -----------------------------------------------------
 extern void libipf_dump_headerinfo(ipf_file &ipf_h);

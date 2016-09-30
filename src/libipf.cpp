@@ -31,16 +31,17 @@ int libipf_uncompress(std::ifstream &fin,ipf_element &ipf_info,ipf_data &buf)
 
 // compress -------------------------------------------------
 // write compress data from buf (and set ipf_info)
-int libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf)
+int libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf,int complevel)
 {
 	int ret=IPF_OK;
-	ret = ipf_info.compress(fout,buf);
+	ret = ipf_info.compress(fout,buf,complevel);
 	return ret;
 }
 
 // write file to IPF header and IPF infomation
-int  libipf_write_header_info(ofstream &fout,ipf_file &ipf_h,ipf_table &ftable,uint32_t base_rev,uint32_t revision)
+int  libipf_write_header_info(ofstream &fout,ipf_table &ftable,uint32_t base_rev,uint32_t revision)
 {
+	ipf_file ipf_h;
 	return ipf_h.write_tofile(fout,ftable,base_rev,revision);
 }
 
@@ -66,6 +67,11 @@ void libipf_dump_fileinfo(ipf_table &ftable)
 	printf("IPF file info ---------------------------------\n");
 	printf(" Fnl  Anl      CRC         Comp       Uncomp   offset arcname filename\n");
 	for(i=0;i<ftable.size();i++){
+		string arcname = ftable[i].getArchiveName();
+		string fname = ftable[i].getFileName();
+		if(arcname.empty()) arcname="[EMPTY]";
+		if(fname.empty()) fname="[EMPTY]";
+		
 		printf("%4d %4d %08X %12d %12d %08X %s %s\n"
 			,ftable[i].getFilenameLength()
 			,ftable[i].getArcnameLength()
@@ -73,8 +79,8 @@ void libipf_dump_fileinfo(ipf_table &ftable)
 			,ftable[i].getCompressLength()
 			,ftable[i].getUnCompressLength()
 			,ftable[i].getDataOffset()
-			,ftable[i].getArchiveName().c_str()
-			,ftable[i].getFileName().c_str()
+			,arcname.c_str()
+			,fname.c_str()
 		);
 	}
 	printf("---------------------------------\n");

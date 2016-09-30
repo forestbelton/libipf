@@ -62,6 +62,7 @@ protected:
 	
 	std::string		m_FileName;				// file and path name (addon.ipf\aaa\bbb.lua)
 	std::string		m_ArchiveName;			// archive name (xx.ipf)
+	std::string		m_FullPath;				// file and folder full path
 	
 	bool			m_enable;
 
@@ -87,8 +88,8 @@ public:
 	// compress --------
 	bool write_infomation_tofile(std::ofstream &fout);
 	
-	int compress(std::ofstream &fout,ipf_data &data);
-	int compress(ipf_data &src,ipf_data &data);
+	int compress(std::ofstream &fout,ipf_data &data,int complevel);
+	int compress(ipf_data &src,ipf_data &data,int complevel);
 	
 	
 	bool write_data_tofile();
@@ -104,6 +105,7 @@ public:
 
 	inline const std::string& getFileName()		{return m_FileName;};
 	inline const std::string& getArchiveName()	{return m_ArchiveName;};
+	inline const std::string& getFullPath()	const	{return m_FullPath;};
 	
 	inline void setDataOffset(uint32_t offset) {m_info.data_offset = offset;};
 	inline void setFileName(const std::string &s) {
@@ -114,8 +116,12 @@ public:
 		m_ArchiveName = s;
 		m_info.arcname_length = (uint16_t)m_ArchiveName.size();
 	};
-	
-	
+	inline void setFullPath(const std::string &s) {
+		m_FullPath = s;
+	};
+	inline void setUnCompressLength(uint32_t val) {
+		m_info.uncomp_length = val;
+	}
 
 	inline bool isDeCompress()
 	{

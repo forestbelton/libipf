@@ -126,6 +126,73 @@ flistはlibipf_read_headerによって設定されていなければなりませ
 	}
 
 
+--------------
+int	libipf_compress(std::ofstream &fout,ipf_element &ipf_info,ipf_data &buf,int complevel);
+
+fout:   ファイルストリームを指定します。呼び出し元でOpenされていなければなりません
+ipf_info: 圧縮したいデータが含まれているipf_elementクラスのオブジェクトをそのまま渡してください。
+buf: 圧縮したいデータ本体のipf_dataクラスのオブジェクトをそのまま渡してください。
+complevel: 圧縮レベルを指定します。0は無圧縮になります。-1～9の値を設定します。
+-1を指定するとZLIBのデフォルト値が設定されます。
+1が最速低圧縮、9が高圧縮になります。
+もともとのIPFファイルはそんなに圧縮されていないようなので、1くらいが良いのではという感じです。
+
+戻り：
+何もエラーが無い場合は、IPF_OKを返します。
+何らかのエラーがあった場合は<0の値を返します。詳細はipferror.hppを見てください。
+説明；
+bufのデータを圧縮・暗号化し、foutに書き込みます。
+成功したら、ipf_infoにOffsetやら必要な情報が書き込まれます。これは後ほどファイルテーブルを
+書くときに必要になります。
+(ただし、ファイル名やらアーカイブ名はセットされないので、自分でセットしてください)
+
+例を示すとこんな感じになります。
+ファイルストリームはbinary指定をやっておいて開かれている必要があります。
+
+	fout.open(opt.getFname().c_str(),ios::out | ios::binary);
+	if(! fout.is_open()){
+		printf("ERROR: open file miss!! %s \n",opt.getFname().c_str());
+		return -1;
+	}
+	for(i=0;i<ipffiles.size();i++){
+		ifstream fin;
+		ipf_data rdata;
+		printf("compress data...%s %s \n",ipffiles[i].getArchiveName().c_str(),ipffiles[i].getFileName().c_str());
+		// 元データをファイルから読む
+		fin.open(ipffiles[i].getFullPath().c_str(),ios::in | ios::binary);
+		if(! fin.is_open()){
+			printf("ERROR: open file miss!! %s \n",ipffiles[i].getFullPath().c_str());
+			return -1;
+		}
+		rdata.resize(ipffiles[i].getUnCompressLength());
+		fin.read((char *) &rdata[0], ipffiles[i].getUnCompressLength());
+		if(!fin) return false;
+		// 圧縮しつつ書き込む
+		status = libipf_compress(fout,ipffiles[i],rdata,opt.getComplevel());
+		if(status != IPF_OK){
+			printf("ERROR: compress data miss!! (%d)\n",status);
+		}
+	}
+
+--------------
+int	libipf_write_header_info(std::ofstream &fout,ipf_table &ftable,uint32_t base_rev,uint32_t revision);
+
+fout:   ファイルストリームを指定します。呼び出し元でOpenされていなければなりません
+ftable: ipf_tableクラスのオブジェクトを渡してください。あらかじめデータが設定されていないとエラーになります。
+base_rev: ベースリビジョンの番号を指定します。よくわからない場合は0でいいです。
+revision: リビジョンの番号を指定します。よくわからない場合は0でいいです。
+
+戻り：
+何もエラーが無い場合は、IPF_OKを返します。
+何らかのエラーがあった場合は<0の値を返します。詳細はipferror.hppを見てください。
+
+説明；
+ftableの内容からIPFテーブル情報とヘッダをファイルに書き込みます。
+ipf_tableの各項目の内容を検査して適切じゃない場合はエラーを返します。
+(アーカイブ名が設定されていなかったりするとエラーです)
+
+IPF作成の最終段階に実行することになるでしょう。
+
 
 
 
@@ -139,11 +206,20 @@ ipf_elementのアーカイブ名とファイル名の扱いには注意が必要
 ディレクトリの区切り文字が/なのでLinuxの場合はそのままでもよいのですが、Windowsの場合は色々
 しないといけません。詳しくはWindows版サンプルをみたらわかるので見てください。
 
-ファイルフォーマット(MAGIC番号)が違う場合はエラーとして返します。
+解凍動作の際、ファイルフォーマット(MAGIC番号)が違う場合はエラーとして返します。
 
 復号、解凍の結果CRCが一致しない場合はエラーとして返します。
 
 復号、解凍の結果、ファイルサイズが違う場合はZlibによってエラーになるかもしれません。
 
-上記三つどれかエラーになった場合は、ipfファイルが壊れてるかフォーマットが変わったと思ってください。
+解凍時、上記三つどれかエラーになった場合は、ipfファイルが壊れてるかフォーマットが変わったと思ってください。
+
+圧縮時の圧縮レベルは1くらいが適切です。9とか指定すると解凍時に時間がかかるかもしれません。
+
+Zip圧縮のアルゴリズムかハフマンテーブルが若干違うようで、元のIPFと比べると若干違う場合があります。
+
+解凍すれば同じものになるので、害はないとは思いますが、一応…
+
+もともとのIPFとも解凍結果を見比べて一致することは確認していますが、圧縮して差し替えするときは注意してください。
+
 

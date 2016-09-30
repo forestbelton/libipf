@@ -62,7 +62,7 @@ static int Zlib_Decompress(ipf_data &comp,ipf_data &dest,uint32_t &total_out)
 }
 
 // Compress using Zlib
-static int Zlib_Compress(ipf_data &data,ipf_data &dest,uint32_t &total_out)
+static int Zlib_Compress(ipf_data &data,ipf_data &dest,uint32_t &total_out,int complevel)
 {
 	z_stream z;
 	int status;
@@ -78,7 +78,8 @@ static int Zlib_Compress(ipf_data &data,ipf_data &dest,uint32_t &total_out)
 
 	// zlib INIT. RAW data use. must -MAX_WBITS
 	status = deflateInit2(&z,
-		Z_DEFAULT_COMPRESSION,
+//		Z_DEFAULT_COMPRESSION,
+		complevel,
 		Z_DEFLATED,
 		-MAX_WBITS,
 		8,
@@ -158,14 +159,13 @@ bool ipf_element::write_infomation_tofile(ofstream &fout)
 	if(getArchiveName().empty()) return false;
 	if(getFilenameLength() <= 0) return false;
 	if(getArcnameLength() <= 0) return false;
-	if(getDataOffset() <= 0) return false;
 	
 	if(!fout) return false;
 	fout.write((char *) &m_info, sizeof(IPFInfo));	
 	if(!fout) return false;
-	fout.write(getArchiveName().c_str(), getArcnameLength()-1);
+	fout.write(getArchiveName().c_str(), getArcnameLength());
 	if(!fout) return false;
-	fout.write(getFileName().c_str(), getFilenameLength()-1);
+	fout.write(getFileName().c_str(), getFilenameLength());
 	if(!fout) return false;
 	
 	return true;
@@ -255,14 +255,14 @@ int ipf_element::uncompress(ipf_data &src,ipf_data &data)
 }
 
 // Data output
-int ipf_element::compress(ofstream &fout,ipf_data &data)
+int ipf_element::compress(ofstream &fout,ipf_data &data,int complevel)
 {
 	m_info.uncomp_length = data.size();
 	m_info.comp_length = 0;
 	setDataOffset((uint32_t)fout.tellp());
 	
 	if(getUnCompressLength() == 0){
-		char dmydata[10];
+		char dmydata[2] = {0x7D,0x00};
 		// set dummy data
 		m_info.comp_length = 2;
 		m_info.crc = 0;
@@ -271,11 +271,10 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 		return IPF_OK;
 	}
 	
+	m_info.crc = computeCRC(data);
 	if(!isCompress()){
 		// it is no compression object
 		m_info.comp_length = m_info.uncomp_length;
-		// CRC32
-		m_info.crc = computeCRC(data);
 		// write file
 		fout.write((const char *) &data[0], getCompressLength());
 		if(! fout)	return IPF_ERROR_FWRITECOMP;
@@ -284,18 +283,16 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 		ipf_data comp;
 		int zstatus;
 		uint32_t comp_len = 0;
-		
+
 		comp.resize(getUnCompressLength() * 2);		// tenuki
 		// compress zip
-		zstatus = Zlib_Compress(data,comp,comp_len);
+		zstatus = Zlib_Compress(data,comp,comp_len,complevel);
 		if(zstatus != IPF_OK){
 			return zstatus;
 		}
 		// resize compress data buffer
 		m_info.comp_length = comp_len;
 		comp.resize(getCompressLength());
-		// CRC32
-		m_info.crc = computeCRC(comp);
 		
 		// ipf encoding
 		ipf_encrypt(IPF_COMPLESS_PASSWD,comp);
@@ -306,7 +303,7 @@ int ipf_element::compress(ofstream &fout,ipf_data &data)
 }
 
 // Output to the data to compress the src
-int ipf_element::compress(ipf_data &src,ipf_data &data)
+int ipf_element::compress(ipf_data &src,ipf_data &data,int complevel)
 {
 	m_info.uncomp_length = src.size();
 	m_info.comp_length = 0;
@@ -316,31 +313,30 @@ int ipf_element::compress(ipf_data &src,ipf_data &data)
 		m_info.comp_length = 2;
 		m_info.crc = 0;
 		data.resize(getCompressLength()); // empty data
+		data[0] = 0x7D;
+		data[1] = 0x00;
 		return IPF_OK;
 	}
 	
+	m_info.crc = computeCRC(src);		
 	if(!isCompress()){
 		// Ahead to ensure the memory area
 		m_info.comp_length = m_info.uncomp_length;
 		data.reserve(src.size());
 		std::copy(src.begin(), src.end(), std::back_inserter(data));
-		// CRC32
-		m_info.crc = computeCRC(data);		
 	}else{
 		int zstatus;
 		uint32_t comp_len = 0;
 		
 		data.resize(getUnCompressLength() * 2);		// tenuki
 		// compress zip
-		zstatus = Zlib_Compress(src,data,comp_len);
+		zstatus = Zlib_Compress(src,data,comp_len,complevel);
 		if(zstatus != IPF_OK){
 			return zstatus;
 		}
 		// resize compress data buffer
 		m_info.comp_length = comp_len;
 		data.resize(getCompressLength());
-		// CRC32
-		m_info.crc = computeCRC(data);
 		// ipf encoding
 		ipf_encrypt(IPF_COMPLESS_PASSWD,data);
 	}
