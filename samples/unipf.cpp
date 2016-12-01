@@ -31,7 +31,7 @@
 using namespace std;
 
 // バージョン
-static const string THIS_VERSION	= "0.0.1";
+static const string THIS_VERSION	= "1.0.0";
 
 
 class cmdlineOption
