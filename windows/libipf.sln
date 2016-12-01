@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libipf", "libipf.vcproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unipf", "winsample\unipf\unipf.vcproj", "{BC8D4783-F962-4569-945E-C2F03C6A171D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ipfpack", "winsample\ipfpack\ipfpack.vcproj", "{46AF7E71-084D-485A-A6DF-142DDDC53E52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Debug|Win32.Build.0 = Debug|Win32
 		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Release|Win32.ActiveCfg = Release|Win32
 		{BC8D4783-F962-4569-945E-C2F03C6A171D}.Release|Win32.Build.0 = Release|Win32
+		{46AF7E71-084D-485A-A6DF-142DDDC53E52}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46AF7E71-084D-485A-A6DF-142DDDC53E52}.Debug|Win32.Build.0 = Debug|Win32
+		{46AF7E71-084D-485A-A6DF-142DDDC53E52}.Release|Win32.ActiveCfg = Release|Win32
+		{46AF7E71-084D-485A-A6DF-142DDDC53E52}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
