@@ -1,10 +1,18 @@
 libipf
 ===============
-某Treeofなんとかのipfファイルをなんとかするためのライブラリです。
+某Treeofなんとかのipfファイルをなんとかするためのライブラリ＆ツールです。
 
 サンプルとして復号＆解凍を行うunipfとIPFファイル作成＆暗号化ツールのipfが付いています。
 
 Windows版ではこれらのGUI版のサンプルがあります。
+
+Windows向けのツールだけ使いたいっていう人は、ここを見てください。
+
+https://github.com/analysisjp/libipf/releases/tag/v1.00
+
+手っ取り早くWindows用の実行ファイルがほしい人はこちらへ
+
+https://github.com/analysisjp/libipf/releases/download/v1.00/ipf_pack_unipf_1.00.zip
 
 使い方
 ===============
