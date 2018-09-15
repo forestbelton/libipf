@@ -1,5 +1,12 @@
+ifeq ($(OS),Windows_NT)
+	LIBSUFFIX = .dll
+	EXESUFFIX = .exe
+else
+	LIBSUFFIX = .so
+	EXESUFFIX
+endif
 
-OBJECTS = libipf.so unipf ipf
+OBJECTS = libipf$(LIBSUFFIX) unipf$(EXESUFFIX) ipf$(EXESUFFIX)
 
 all: libs sample
 
@@ -10,10 +17,10 @@ clean:
 
 libs:
 	- cd src ; make
-	-@ cp ./src/libipf.so ./
+	-@ cp ./src/libipf$(LIBSUFFIX) ./
 
 sample:
 	- cd samples ; make
-	-@ cp ./samples/ipf ./
-	-@ cp ./samples/unipf ./
+	-@ cp ./samples/unipf$(EXESUFFIX) ./
+	-@ cp ./samples/ipf$(EXESUFFIX) ./
 

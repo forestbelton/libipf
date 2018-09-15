@@ -97,7 +97,11 @@ public:
 // ディレクトリ作成
 static int makedir(const string &dirname,mode_t mode)
 {
+#ifdef __MINGW32__
+	return mkdir(dirname.c_str());
+#else
 	return mkdir(dirname.c_str(),mode);
+#endif
 }
 
 static void makepath(const string &dirname)

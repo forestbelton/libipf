@@ -1,9 +1,12 @@
+ifeq ($(OS),Windows_NT)
+	LIBSUFFIX = .dll
+else
+	LIBSUFFIX = .so
+endif
 
 CC        = $(CROSS_COMPILE)g++
 STRIP     = $(CROSS_COMPILE)strip
-
-TARGET    = libipf.so
-
+TARGET    = libipf$(LIBSUFFIX)
 SRCS	  = ipfcrypt.cpp ipffile.cpp libipf.cpp
 OBJS	  = $(SRCS:%.cpp=%.o)
 DEPS	  = $(SRCS:%.cpp=%.d)
