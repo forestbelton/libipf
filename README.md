@@ -1,5 +1,11 @@
 libipf
 ===============
+This is a C++ library and set of helper tools for manipulating .ipf files from Tree of Savior. In order to build the library, you will need GNU Make, a C++ compiler and zlib installed.
+
+* To pack a directory named `foo` into a file `bar.ipf`, run `./ipf bar.ipf foo`
+
+libipf (original README)
+===============
 某Treeofなんとかのipfファイルをなんとかするためのライブラリ＆ツールです。
 
 サンプルとして復号＆解凍を行うunipfとIPFファイル作成＆暗号化ツールのipfが付いています。
