@@ -12,9 +12,11 @@ OBJS	  = $(SRCS:%.cpp=%.o)
 DEPS	  = $(SRCS:%.cpp=%.d)
 INCLUDE_DIRS =  . ../include
 
+LDFLAGS   = -L../ -lipf -lz
 CFLAGS    = -Wall -O2 $(addprefix -I,$(INCLUDE_DIRS))
-LDFLAGS   = -L../ -lipf
-
+ifeq ($(OS),Windows_NT)
+	CFLAGS := $(CFLAGS) -static -static-libgcc -static-libstdc++
+endif
 
 all: $(TARGET)
 
