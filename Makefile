@@ -18,6 +18,7 @@ clean:
 libs:
 	- cd src ; make
 	-@ cp ./src/libipf$(LIBSUFFIX) ./
+	-@ cp ./src/libipf.a ./
 
 sample:
 	- cd samples ; make
